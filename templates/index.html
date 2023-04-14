@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>短网址生成工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 680px;
+            margin-top: 100px;
+            margin: auto;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .input-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .input-and-bulk-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%
+        }
+
+        input[type="text"] {
+            width: 100%;
+            height: 50px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #570df8;
+            border-radius: 15px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        button {
+            position: absolute;
+            right: 0;
+            bottom: -70px;
+            width: 80px;
+            height: 40px;
+            background-color: #3d4451;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .bulk-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .file-input {
+            margin-bottom: 10px;
+        }
+
+        .file-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .file-label {
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #570df8;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-label:hover {
+            background-color: #3f46a3;
+        }
+
+        .filename {
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .filename {
+        font-size: 16px;
+        margin-left: 10px;
+        max-width: 20ch; /* 添加此属性以限制最大宽度 */
+        overflow: hidden; /* 添加此属性以隐藏溢出的文本 */
+        text-overflow: ellipsis; /* 添加此属性以在溢出部分显示省略号 */
+        white-space: nowrap; /* 添加此属性以防止文本换行 */
+        }
+
+        .file-display {
+            border: 1px solid #570df800;
+            background-color: #ffffff;
+            border-radius: 5px;
+            width: 150px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; /* 修改此属性的值以使文件名靠右显示 */
+            padding: 0 10px;
+            margin-left: 10px;
+            flex-direction: row-reverse;
+        }
+
+        .file-placeholder {
+            color: #ccc;
+        }
+
+        .history-container::-webkit-scrollbar {
+            width: 3px;
+            background-color: #F5F5F5;
+        }
+
+        .history-container::-webkit-scrollbar-thumb {
+            border-radius: 4px;
+            background-color: #3d4451;
+        }
+
+
+
+
+    @media screen and (min-width: 768px) {
+    .history-row {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .original-url,
+    .short-url {
+        width: calc(50% - 10px);
+    }
+}
+
+
+
+
+    @media screen and (min-width: 768px) {
+        .original-url,
+        .short-url {
+            width: calc(50% - 10px);
+        }
+    }
+    .content-wrapper {
+        margin-top: 100px; /* 更改此值以调整整体向下移动的距离 */
+    }
+    .separator {
+        width: 100%;
+        height: 1px;
+        background-color: #ccc;
+        margin-bottom: 60px;
+    }
+    .separator {
+        margin-top: 100px;
+    }
+    .bulk-container p {
+        margin-bottom: 15px;
+        font-size: .875rem;
+    }
+
+
+
+    .history-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    max-height: 245px;
+    overflow-y: auto;
+    margin-bottom: 30px;
+}
+
+.history-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.original-url {
+    font-size: 16px;
+    word-break: break-all;
+}
+
+.short-url {
+    font-size: 14px;
+    text-align: right;
+    word-break: break-all;
+}
+
+.short-url a {
+    color: #570df8;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.short-url a:hover {
+    text-decoration: underline;
+}
+
+@media screen and (min-width: 768px) {
+    .history-row {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .original-url,
+    .short-url {
+        width: calc(50% - 10px);
+    }
+}
+
+
+</style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <h2>Get your short URL 👇</h2>
+        <form class="input-container" action="/" method="post" enctype="multipart/form-data" id="url-form">
+            <div class="input-and-bulk-container">
+                <input type="text" name="url" id="url" placeholder="输入长网址" required>
+                <div class="bulk-container">
+                    <p>上传EXCEL，可批量生成短网址哦！</p>
+                    <div class="file-container">
+                        <input type="file" name="file" class="file-input" accept=".xlsx, .xls" id="file-input" style="display:none">
+                        <label for="file-input" class="file-label">选择文件</label>
+                        <div class="file-display">
+                            <span class="filename"></span>
+                            <span class="file-placeholder">未选择文件</span>
+                        </div>
+                    </div>
+                    <span class="filename"></span>
+                </div>
+            </div>
+            <button type="submit">🚀 GET</button>
+        </form>
+    </div>
+    
+    <div class="separator"></div>
+
+
+
+    <div class="history-container">
+        <h3>短网址历史记录</h3>
+        {% for short_url, long_url in urls.items() %}
+
+        <div class="history-row">
+            <div class="original-url" style="max-width: 30ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ long_url }}</div>
+            <div class="short-url">
+                <a href="#" onclick="copyShortUrl(event, '{{ request.url_root }}{{ short_url }}')">{{ request.url_root }}{{ short_url }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    
+    
+    <div id="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;">
+        <div style="max-width: 400px; background-color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; border-radius: 5px;">
+          <h3>短网址</h3>
+          <p id="short-url"></p>
+          <button onclick="closeModal()">关闭</button>
+        </div>
+      </div>
+      
+
+
+
+    <script>
+        function copyToClipboard(text) {
+          const el = document.createElement('textarea');
+          el.value = text;
+          document.body.appendChild(el);
+          el.select();
+          document.execCommand('copy');
+          document.body.removeChild(el);
+        }
+    
+        const historyLinks = document.querySelectorAll('.history-container a');
+        historyLinks.forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            copyToClipboard(link.href);
+            alert('短网址已复制到剪贴板！');
+});
+});
+const form = document.querySelector('form');
+const fileInput = document.getElementById('file-input');
+const fileDisplay = document.querySelector('.file-display');
+const filename = document.querySelector('.filename');
+const filePlaceholder = document.querySelector('.file-placeholder');
+
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length) {
+        filename.textContent = e.target.files[0].name;
+        filePlaceholder.style.display = 'none';
+        filename.style.display = 'block';
+    } else {
+        filename.textContent = '';
+        filePlaceholder.style.display = 'block';
+        filename.style.display = 'none';
+    }
+});
+
+form.addEventListener("submit", (e) => {
+    const urlInput = document.getElementById("url");
+    if (!urlInput.value && !fileInput.files.length) {
+        e.preventDefault();
+        alert("请提供一个长网址或上传一个文件！");
+    } else {
+        setTimeout(resetForm, 100);
+    }
+});
+
+
+document.getElementById("url-form").addEventListener("submit", function (e) {
+    const urlInput = document.getElementById("url");
+    const fileInput = document.getElementById("file-input");
+
+    if (fileInput.files.length > 0) {
+        urlInput.removeAttribute("required");
+    } else {
+        urlInput.setAttribute("required", "");
+    }
+});
+
+fileInput.addEventListener('change', (e) => {
+    const urlInput = document.getElementById("url");
+
+    if (e.target.files.length) {
+        urlInput.removeAttribute("required");
+    } else {
+        urlInput.setAttribute("required", "");
+    }
+});
+
+function resetForm() {
+    const urlInput = document.getElementById("url");
+    const fileInput = document.getElementById("file-input");
+    const filename = document.querySelector(".filename");
+    const filePlaceholder = document.querySelector(".file-placeholder");
+
+    urlInput.value = "";
+    fileInput.value = "";
+    filename.textContent = "";
+    filePlaceholder.style.display = "block";
+    filename.style.display = "none";
+}
+
+function openModal(shortUrl) {
+  document.getElementById("short-url").innerText = shortUrl;
+  document.getElementById("modal").style.display = "block";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+  // 添加这行代码以在关闭模态框时删除 session 存储的 short_url
+  sessionStorage.removeItem("short_url");
+}
+
+
+
+window.onload = function () {
+  const newShortUrl = "{{ new_short_url }}";
+  const shortUrl = "{{ short_url }}";
+  if (newShortUrl && !sessionStorage.getItem("short_url")) { // 修改此行代码
+    openModal(shortUrl);
+    sessionStorage.setItem("short_url", shortUrl); // 将 short_url 存储到 session 中
+  }
+};
+
+
+
+</script>
+</body>
+</html>
