@@ -270,7 +270,7 @@
         <div style="max-width: 400px; background-color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; border-radius: 5px;">
           <h3>短网址</h3>
           <p id="short-url"></p>
-          <button onclick="closeModal()">关闭</button>
+          <button onclick="createShortLinkAjax()">Generate Short Link</button>
         </div>
       </div>
       
@@ -369,18 +369,22 @@ function closeModal() {
   sessionStorage.removeItem("short_url");
 }
 
-
-
-window.onload = function () {
-  const newShortUrl = "{{ new_short_url }}";
-  const shortUrl = "{{ short_url }}";
-  if (newShortUrl && !sessionStorage.getItem("short_url")) { // 修改此行代码
-    openModal(shortUrl);
-    sessionStorage.setItem("short_url", shortUrl); // 将 short_url 存储到 session 中
-  }
-};
-
-
+function createShortLinkAjax() {
+  $.ajax({
+    url: '/create-short-link',
+    type: 'POST',
+    success: function(response) {
+      if (response.result === 'success') {
+        $('#short-link').val(response.short_link);
+      } else {
+        alert('Failed to create short link.');
+      }
+    },
+    error: function() {
+      alert('Failed to create short link.');
+    }
+  });
+}
 
 </script>
 </body>
